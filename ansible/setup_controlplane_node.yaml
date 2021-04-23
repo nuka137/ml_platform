@@ -1,0 +1,7 @@
+- name: Setup kubernetes control plane node
+  hosts: localhost
+  gather_facts: false
+  become: yes
+  roles:
+    - setup_kubernetes
+    - setup_controlplane_node

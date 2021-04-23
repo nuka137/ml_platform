@@ -1,0 +1,38 @@
+---
+- name: Setup controlplane node
+  shell: kubeadm init --apiserver-advertise-address=10.0.2.201 --pod-network-cidr=10.244.0.0/16
+- name: Create .kube directory for k8s-user
+  file:
+    path: "/home/k8s-user/.kube/"
+    state: directory
+    mode: "0755"
+    owner: "k8s-user"
+    group: "k8s-user"
+- name: Create .kube directory for root
+  file:
+    path: "/root/.kube/"
+    state: directory
+    mode: "0755"
+    owner: "root"
+    group: "root"
+- name: Copy admin.conf
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/k8s-user/.kube/config"
+    owner: "k8s-user"
+    group: "k8s-user"
+    mode: "0600"
+- name: Copy admin.conf for root
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/root/.kube/config"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+- name: Download Calico's manifest file
+  get_url:
+    url: https://docs.projectcalico.org/manifests/calico.yaml
+    dest: /tmp/calico.yaml
+    force: yes
+- name: Install Calico
+  shell: kubectl apply -f /tmp/calico.yaml

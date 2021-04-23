@@ -1,0 +1,6 @@
+---
+- name: Set kubelet's extra args
+  lineinfile:
+    path: /etc/default/kubelet
+    line: KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs
+    create: yes
