@@ -1,0 +1,144 @@
+---
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+- name: Add user for kubernetes
+  user:
+    name: "{{ k8s_user_name }}"
+    password: "{{ k8s_user_password | password_hash(\"sha512\") }}"
+    groups: sudo
+    shell: /bin/bash
+    comment: User for kubernetes
+- name: Enable password authentication
+  lineinfile: >-
+    dest="/etc/ssh/sshd_config"
+    state=present
+    backrefs=yes
+    regexp="^PasswordAuthentication\s+no"
+    line="PasswordAuthentication yes"
+- name: Restart sshd
+  ansible.builtin.systemd:
+    name: sshd
+    state: restarted
+- name: Modprobe br_netfilter
+  command: modprobe br_netfilter
+- name: Setup network for kubernetes 1
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_set: false
+    reload: true
+    sysctl_file: /etc/sysctl.d/k8s.conf
+  loop: "{{ kernel_params }}"
+- name: Install firewall
+  apt:
+    pkg:
+      - iptables
+      - arptables
+      - ebtables
+- name: Alternative firewall
+  alternatives:
+    name: "{{ item.name }}"
+    path: "{{ item.path }}"
+  loop: "{{ firewall_alternatives }}"
+- name: Install deps packages for kubernetes
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg2
+- name: Add gpg key for docker
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+- name: Add repo for docker
+  ansible.builtin.apt_repository:
+    # deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+- name: Update apt
+  apt:
+    update_cache: yes
+- name: Install docker
+  apt:
+    pkg:
+      - containerd.io=1.2.13-2
+      - docker-ce=5:19.03.11~3-0~ubuntu-focal
+      - docker-ce-cli=5:19.03.11~3-0~ubuntu-focal
+    force: yes
+- name: Copy daemon.json for docker
+  copy:
+    src: ./daemon.json
+    dest: /etc/docker/daemon.json
+- name: Make systemd directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    mode: "0755"
+- name: Reload daemons
+  ansible.builtin.systemd:
+    daemon_reload: yes
+- name: Restart docker
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+- name: Enable docker
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+- name: Install dependency for kubernetes
+  apt:
+    pkg:
+      - apt-transport-https
+      - curl
+- name: Add gpg key for kubernetes
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+- name: Add apt repos for kubernetes
+  lineinfile:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    line: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    create: yes
+- name: Update apt
+  apt:
+    update_cache: yes
+- name: Install kubernetes
+  apt:
+    pkg:
+      - kubelet=1.21.0-00
+      - kubeadm=1.21.0-00
+      - kubectl=1.21.0-00
+- name: Hold kubernetes packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+# Disable swap
+- name: Get swap state
+  shell: swapon -v
+  register: swap_state
+  check_mode: false
+  changed_when: false
+- name: Swap off
+  shell: swapoff -a
+  when: swap_state.stdout != ""
+- name: Swap check
+  shell: grep -v "\s*#" /etc/fstab | awk '{print $2}' | grep swap -c
+  register: swap_state_in_fstab
+  check_mode: false
+  changed_when: false
+  ignore_errors: true
+- name: Disable swap
+  replace:
+    path: /etc/fstab
+    regexp: ([^\s]+\s+swap\s+.*)
+    replace: '# \1'
+  when: swap_state_in_fstab.stdout != "0"

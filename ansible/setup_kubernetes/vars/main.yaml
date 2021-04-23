@@ -1,0 +1,17 @@
+---
+k8s_user_name: k8s-user
+k8s_user_password: k8s-user
+kernel_params:
+  - key: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+  - key: net.bridge.bridge-nf-call-iptables
+    value: 1
+firewall_alternatives:
+  - name: iptables
+    path: /usr/sbin/iptables-legacy
+  - name: ip6tables
+    path: /usr/sbin/ip6tables-legacy
+  - name: arptables
+    path: /usr/sbin/arptables-legacy
+  - name: ebtables
+    path: /usr/sbin/ebtables-legacy
