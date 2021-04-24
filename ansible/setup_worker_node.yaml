@@ -1,5 +1,5 @@
 - name: Setup kubernetes worker node
-  hosts: localhost
+  hosts: all
   gather_facts: false
   become: yes
   roles:
