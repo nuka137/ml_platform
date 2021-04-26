@@ -16,4 +16,10 @@
     src: /tmp/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz
     dest: "{{ kf_dir }}"
 - name: Install kubeflow
-  shell: "{ kf_dir }}"/kfctl apply -V -f {{ config_uri }}
+  shell: "cd {{ kf_dir }} && $KF_DIR/kfctl apply -V -f $CONFIG_URI"
+  environment:
+    PATH: "$PATH:{{ kf_path }}"
+    KF_NAME: "{{ kf_name }}"
+    BASE_DIR: "{{ base_dir }}"
+    KF_DIR: "{{ kf_dir }}"
+    CONFIG_URI: "{{ config_uri }}"
