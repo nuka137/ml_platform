@@ -1,7 +1,7 @@
-- name: Setup kubernetes worker node
+- name: Setup kubernetes
   hosts: all
   gather_facts: false
   become: yes
   roles:
     - setup_kubernetes
-    - setup_worker_node
+    - setup_nfs_client

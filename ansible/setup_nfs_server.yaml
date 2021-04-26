@@ -1,0 +1,6 @@
+- name: Setup NFS server
+  hosts: all
+  gather_facts: false
+  become: yes
+  roles:
+    - setup_nfs_server

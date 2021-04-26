@@ -1,0 +1,19 @@
+---
+- name: Download kfctl
+  get_url:
+    url: https://github.com/kubeflow/kfctl/releases/download/v1.2.0/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz
+    dest: /tmp/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz
+    force: yes
+- name: Create directory for kfctl
+  file:
+    path: "{{ kf_dir }}"
+    state: directory
+    mode: "0777"
+    owner: "k8s-user"
+    group: "k8s-user"
+- name: Unarchive kfctl
+  ansible.builtin.unarchive:
+    src: /tmp/kfctl_v1.2.0-0-gbc038f9_linux.tar.gz
+    dest: "{{ kf_dir }}"
+- name: Install kubeflow
+  shell: "{ kf_dir }}"/kfctl apply -V -f {{ config_uri }}

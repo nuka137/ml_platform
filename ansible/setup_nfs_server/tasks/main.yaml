@@ -1,0 +1,43 @@
+---
+- name: Add user for kubernetes
+  user:
+    name: "{{ k8s_user_name }}"
+    password: "{{ k8s_user_password | password_hash(\"sha512\") }}"
+    groups: sudo
+    shell: /bin/bash
+    comment: User for kubernetes
+- name: Enable password authentication
+  lineinfile: >-
+    dest="/etc/ssh/sshd_config"
+    state=present
+    backrefs=yes
+    regexp="^PasswordAuthentication\s+no"
+    line="PasswordAuthentication yes"
+- name: Restart sshd
+  ansible.builtin.systemd:
+    name: sshd
+    state: restarted
+
+- name: Create directory for NFS export
+  file:
+    path: "/export/kubernetes"
+    state: directory
+    mode: "0777"
+    owner: "root"
+    group: "root"
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+- name: Install NFS server
+  apt:
+    pkg:
+      - nfs-kernel-server
+- name: Add export entry
+  lineinfile:
+    path: /etc/exports
+    line: "/export/kubernetes    10.0.11.0/255.255.255.0(rw,sync,no_subtree_check,no_root_squash)"
+- name: Restart NFS server
+  ansible.builtin.systemd:
+    name: nfs-kernel-server
+    state: restarted

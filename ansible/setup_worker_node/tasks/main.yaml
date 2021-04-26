@@ -2,5 +2,8 @@
 - name: Set kubelet's extra args
   lineinfile:
     path: /etc/default/kubelet
-    line: KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs
+    line: KUBELET_EXTRA_ARGS=--cgroup-driver=systemd
     create: yes
+
+- name: Join to the cluster
+  shell: kubeadm join --token {{hostvars[groups.controlplane[0]].kubeadm_token.stdout}} {{hostvars[groups.controlplane[0]].ansible_host}}:6443 --discovery-token-ca-cert-hash sha256:{{hostvars[groups.controlplane[0]].kubeadm_ca_cert.stdout}}

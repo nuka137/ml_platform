@@ -1,9 +1,0 @@
-- name: Setup kubernetes control plane node
-  hosts: all
-  gather_facts: false
-  become: true
-  become_user: root
-  become_method: sudo
-  roles:
-    - setup_kubernetes
-    - setup_controlplane_node

@@ -38,6 +38,10 @@
       - iptables
       - arptables
       - ebtables
+- name: Install sshpass
+  apt:
+    pkg:
+      - sshpass
 - name: Alternative firewall
   alternatives:
     name: "{{ item.name }}"

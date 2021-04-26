@@ -1,6 +1,7 @@
 ---
 - name: Setup controlplane node
-  shell: kubeadm init --apiserver-advertise-address=10.0.11.201 --pod-network-cidr=10.244.0.0/16
+  shell: kubeadm init --apiserver-advertise-address={{hostvars[groups.controlplane[0]].ansible_host}} --pod-network-cidr=10.244.0.0/16
+
 - name: Create .kube directory for k8s-user
   file:
     path: "/home/k8s-user/.kube/"
@@ -15,6 +16,7 @@
     mode: "0755"
     owner: "root"
     group: "root"
+
 - name: Copy admin.conf
   copy:
     src: /etc/kubernetes/admin.conf
@@ -31,10 +33,36 @@
     group: "root"
     mode: "0600"
     remote_src: yes
+
 - name: Download Calico's manifest file
   get_url:
     url: https://docs.projectcalico.org/manifests/calico.yaml
     dest: /tmp/calico.yaml
     force: yes
+
 - name: Install Calico
   shell: kubectl apply -f /tmp/calico.yaml
+
+- name: Create token for adding node
+  shell: kubeadm token create
+  register: kubeadm_token
+
+- name: Get ca cert
+  shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  check_mode: false
+  changed_when: false
+  register: kubeadm_ca_cert
+
+- name: Download helm's installation script
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: /tmp/get-helm-3
+    force: yes
+- name: Install helm
+  shell: bash /tmp/get-helm-3
+- name: Add helm repository
+  shell: helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+- name: Update helm repository
+  shell: helm repo update
+- name: Install NFS provisioner
+  shell: helm install nfs-subdir-external-provisioner --set nfs.server={{hostvars[groups.nfs[0]].ansible_host}} --set nfs.path=/export/kubernetes --set storageClass.name=nfs --set storageClass.defaultClass=true nfs-subdir-external-provisioner/nfs-subdir-external-provisioner

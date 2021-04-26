@@ -13,50 +13,70 @@ Vagrant.configure("2") do |config|
 
     k8s.vm.provider "virtualbox" do |vb|
       vb.memory = 4096
-      vb.cpus = 2
+      vb.cpus = 4
     end
 
     k8s.disksize.size = "100GB"
 
     k8s.vm.provision "ansible_local" do |ansible|
-      ansible.playbook = "ansible/setup_controlplane_node.yaml"
+      ansible.playbook = "ansible/setup_kubernetes_node.yaml"
     end
   end
 
-  config.vm.define :"k8s-worker-1" do |k8s|
-    k8s.vm.hostname = "k8s-worker-1"
+  (1..2).each do |i|
+    config.vm.define :"k8s-worker-#{i}" do |k8s|
+      k8s.vm.hostname = "k8s-worker-#{i}"
 
-    k8s.vm.network "private_network", ip: "192.168.56.202"
-    k8s.vm.network "private_network", ip: "10.0.11.202", virtualbox__intnet: "NatNetwork"
+      k8s.vm.network "private_network", ip: "192.168.56.21#{i}"
+      k8s.vm.network "private_network", ip: "10.0.11.21#{i}", virtualbox__intnet: "NatNetwork"
 
-    k8s.vm.provider "virtualbox" do |vb|
-      vb.memory = 4096
-      vb.cpus = 2
-    end
+      k8s.vm.provider "virtualbox" do |vb|
+        vb.memory = 8192
+        vb.cpus = 4
+      end
 
-    k8s.disksize.size = "100GB"
+      k8s.disksize.size = "100GB"
 
-    k8s.vm.provision "ansible_local" do |ansible|
-      ansible.playbook = "ansible/setup_worker_node.yaml"
+      k8s.vm.provision "ansible_local" do |ansible|
+        ansible.playbook = "ansible/setup_kubernetes_node.yaml"
+      end
     end
   end
+
+  # config.vm.define :"k8s-worker-2" do |k8s|
+  #   k8s.vm.hostname = "k8s-worker-2"
+
+  #   k8s.vm.network "private_network", ip: "192.168.56.203"
+  #   k8s.vm.network "private_network", ip: "10.0.11.203", virtualbox__intnet: "NatNetwork"
+
+  #   k8s.vm.provider "virtualbox" do |vb|
+  #     vb.memory = 8192
+  #     vb.cpus = 4
+  #   end
+
+  #   k8s.disksize.size = "100GB"
+
+  #   k8s.vm.provision "ansible_local" do |ansible|
+  #     ansible.playbook = "ansible/setup_kubernetes_node.yaml"
+  #   end
+  # end
 
   config.vm.define :"k8s-nfs-server" do |k8s|
     k8s.vm.hostname = "k8s-nfs-server"
 
-    k8s.vm.network "private_network", ip: "192.168.56.211"
-    k8s.vm.network "private_network", ip: "10.0.11.211", virtualbox__intnet: "NatNetwork"
+    k8s.vm.network "private_network", ip: "192.168.56.221"
+    k8s.vm.network "private_network", ip: "10.0.11.221", virtualbox__intnet: "NatNetwork"
 
     k8s.vm.provider "virtualbox" do |vb|
-      vb.memory = 2048
+      vb.memory = 1024
       vb.cpus = 1
     end
 
     k8s.disksize.size = "150GB"
 
-    # k8s.vm.provision "ansible_kubernetes" do |ansible|
-    #   ansible.playbook = "ansible/kubernetest.yaml"
-    # end
+    k8s.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "ansible/setup_nfs_server.yaml"
+    end
   end
 
 end
