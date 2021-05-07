@@ -1,0 +1,6 @@
+- name: Setup Docker
+  hosts: all
+  gather_facts: false
+  become: yes
+  roles:
+    - setup_docker
