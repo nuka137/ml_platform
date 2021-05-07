@@ -3,5 +3,6 @@
   gather_facts: false
   become: yes
   roles:
+    - setup_docker
     - setup_kubernetes
     - setup_nfs_client
