@@ -1,5 +1,5 @@
 - name: Setup NFS server
-  hosts: all
+  hosts: nfs
   gather_facts: false
   become: yes
   roles:

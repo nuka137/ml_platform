@@ -1,5 +1,5 @@
 - name: Setup Docker
-  hosts: all
+  hosts: controlplane, worker
   gather_facts: false
   become: yes
   roles:
