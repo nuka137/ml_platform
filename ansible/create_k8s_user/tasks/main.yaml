@@ -1,0 +1,45 @@
+---
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: yes
+- name: Install sshpass
+  apt:
+    pkg:
+      - sshpass
+
+- name: Add user for kubernetes
+  user:
+    name: "{{ k8s_user_name }}"
+    password: "{{ k8s_user_password | password_hash(\"sha512\") }}"
+    groups: sudo
+    shell: /bin/bash
+    comment: User for kubernetes
+- name: Enable password authentication
+  lineinfile: >-
+    dest="/etc/ssh/sshd_config"
+    state=present
+    backrefs=yes
+    regexp="^PasswordAuthentication\s+no"
+    line="PasswordAuthentication yes"
+- name: Restart sshd
+  ansible.builtin.systemd:
+    name: sshd
+    state: restarted
+
+- name: Create .kube directory for k8s-user
+  file:
+    path: "/home/{{ k8s_user_name }}/.kube/"
+    state: directory
+    mode: "0755"
+    owner: "{{ k8s_user_name }}"
+    group: "{{ k8s_user_name }}"
+
+- name: Copy admin.conf
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{ k8s_user_name }}/.kube/config"
+    owner: "{{ k8s_user_name }}"
+    group: "{{ k8s_user_name }}"
+    mode: "0600"
+    remote_src: yes

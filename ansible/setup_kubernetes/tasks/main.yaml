@@ -3,24 +3,6 @@
   apt:
     update_cache: yes
     upgrade: yes
-- name: Add user for kubernetes
-  user:
-    name: "{{ k8s_user_name }}"
-    password: "{{ k8s_user_password | password_hash(\"sha512\") }}"
-    groups: sudo
-    shell: /bin/bash
-    comment: User for kubernetes
-- name: Enable password authentication
-  lineinfile: >-
-    dest="/etc/ssh/sshd_config"
-    state=present
-    backrefs=yes
-    regexp="^PasswordAuthentication\s+no"
-    line="PasswordAuthentication yes"
-- name: Restart sshd
-  ansible.builtin.systemd:
-    name: sshd
-    state: restarted
 - name: Modprobe br_netfilter
   command: modprobe br_netfilter
 - name: Setup network for kubernetes 1
@@ -38,10 +20,6 @@
       - iptables
       - arptables
       - ebtables
-- name: Install sshpass
-  apt:
-    pkg:
-      - sshpass
 - name: Alternative firewall
   alternatives:
     name: "{{ item.name }}"

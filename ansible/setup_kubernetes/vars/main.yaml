@@ -1,6 +1,4 @@
 ---
-k8s_user_name: k8s-user
-k8s_user_password: k8s-user
 kernel_params:
   - key: net.bridge.bridge-nf-call-ip6tables
     value: 1

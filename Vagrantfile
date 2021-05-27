@@ -6,6 +6,13 @@ Vagrant.configure("2") do |config|
   config.vm.box_download_insecure = true
   config.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=775", "fmode=664"]
 
+  config.ssh.insert_key = false
+  config.ssh.private_key_path = "~/.vagrant.d/insecure_private_key"
+  config.vm.provision "file", source: "~/.vagrant.d/insecure_private_key", destination: "/home/vagrant/.ssh/id_rsa"
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    chmod 600 /home/vagrant/.ssh/id_rsa
+  SHELL
+
   config.vm.define :"k8s-controlplane-1" do |k8s|
     k8s.vm.hostname = "k8s-controlplane-1"
 
@@ -21,10 +28,12 @@ Vagrant.configure("2") do |config|
 
     k8s.vm.provision "ansible_local" do |ansible|
       ansible.playbook = "ansible/setup_kubernetes_node.yaml"
+      ansible.inventory_path = "inventory.ini"
+      ansible.limit = "controlplane"
     end
   end
 
-  (1..2).each do |i|
+  (1..1).each do |i|
     config.vm.define :"k8s-worker-#{i}" do |k8s|
       k8s.vm.hostname = "k8s-worker-#{i}"
 
@@ -40,6 +49,8 @@ Vagrant.configure("2") do |config|
 
       k8s.vm.provision "ansible_local" do |ansible|
         ansible.playbook = "ansible/setup_kubernetes_node.yaml"
+        ansible.inventory_path = "inventory.ini"
+        ansible.limit = "worker"
       end
     end
   end
@@ -59,6 +70,8 @@ Vagrant.configure("2") do |config|
 
     k8s.vm.provision "ansible_local" do |ansible|
       ansible.playbook = "ansible/setup_nfs_server.yaml"
+      ansible.inventory_path = "inventory.ini"
+      ansible.limit = "nfs"
     end
   end
 
