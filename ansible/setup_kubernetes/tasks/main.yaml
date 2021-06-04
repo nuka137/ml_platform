@@ -64,6 +64,7 @@
     - kubelet
     - kubeadm
     - kubectl
+
 # Disable swap
 - name: Get swap state
   shell: swapon -v
@@ -85,3 +86,21 @@
     regexp: ([^\s]+\s+swap\s+.*)
     replace: '# \1'
   when: swap_state_in_fstab.stdout != "0"
+
+# Change internal IP address
+- name: Change kubernetes internal IP address.
+  # lineinfile:
+  #   path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+  #   line: Environment="KUBELET_EXTRA_ARGS=--node-ip={{ ansible_host }}"
+  #   create: no
+  replace:
+    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: (^KUBELET_EXTRA_ARGS=.*$)
+    replace: '\1 --node-ip={{ ansible_host }}'
+- name: Reload daemons
+  ansible.builtin.systemd:
+    daemon_reload: yes
+- name: Restart kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    state: restarted

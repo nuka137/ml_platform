@@ -23,10 +23,6 @@
   shell: 'getent passwd "{{ ansible_ssh_user }}" | cut -d: -f6'
   register: ansible_ssh_user_home
 
-- debug: var=ansible_ssh_user
-
-- debug: var=ansible_ssh_user_home
-
 - name: Create .kube directory for ansible_ssh_user
   file:
     path: "{{ ansible_ssh_user_home.stdout }}/.kube/"
@@ -36,12 +32,13 @@
     group: "{{ ansible_ssh_user }}"
 
 - name: Copy admin.conf for ansible_user_id
-  file:
-    path: "{{ ansible_ssh_user_home.stdout }}/.kube/"
-    state: directory
-    mode: "0755"
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_ssh_user_home.stdout }}/.kube/config"
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
+    mode: "0600"
+    remote_src: yes
 
 - name: Download Calico's manifest file
   get_url:
