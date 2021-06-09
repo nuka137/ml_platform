@@ -7,3 +7,17 @@
 
 - name: Join to the cluster
   shell: kubeadm join --token {{hostvars[groups.controlplane[0]].kubeadm_token.stdout}} {{hostvars[groups.controlplane[0]].ansible_host}}:6443 --discovery-token-ca-cert-hash sha256:{{hostvars[groups.controlplane[0]].kubeadm_ca_cert.stdout}}
+
+# Change internal IP address
+- name: Change kubernetes internal IP address.
+  replace:
+    path: /var/lib/kubelet/kubeadm-flags.env
+    regexp: ^KUBELET_KUBEADM_ARGS=\"(.*)\"$
+    replace: 'KUBELET_KUBEADM_ARGS="\1 --node-ip={{ ansible_host }}"'
+- name: Reload daemons
+  ansible.builtin.systemd:
+    daemon_reload: yes
+- name: Restart kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    state: restarted

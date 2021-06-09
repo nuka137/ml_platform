@@ -2,34 +2,50 @@
 - name: Create namespace 'airflow'
   shell: kubectl create ns airflow
 
-- name: Add helm repository
+- name: Add helm repository (postgres)
   shell: helm repo add postgres-stable https://charts.bitnami.com/bitnami
 - name: Update helm repository
   shell: helm repo update
 - name: Install postgresql
-  shell: |-
-    helm install postgres-cluster postgres-stable/postgresql
+  shell: |
+    helm install airflow-postgres postgres-stable/postgresql \
+      --namespace airflow \
+      --set postgresqlDatabase=postgres
+
+- name: Add helm repository (redis)
+  shell: helm repo add bitnami https://charts.bitnami.com/bitnami
+- name: Update helm repository
+  shell: helm repo update
+- name: Install redis
+  shell: |
+    helm install airflow-redis bitnami/redis \
       --namespace airflow
-      --set postgresqlPostgresPassword=airflow-db-postres-pass
-      --set postgresqlUsername=airflow-db-user
-      --set postgresqlPassword=airflow-db-pass
-      --set postgresqlDatabase=airflow-db
 
 - name: Add helm repository
   shell: helm repo add airflow-stable https://airflow-helm.github.io/charts
 - name: Update helm repository
   shell: helm repo update
-- name: Install NFS provisioner
-  shell: |-
-    helm install airflow-cluster airflow-stable/airflow
-      --namespace airflow
-      --version 8.1.3
-      --set web.service.nodePort.http=31000
-      --set web.service.type=NodePort
-      --set postgresql.enabled=false
-      --set externalDatabase.host=postgres-cluster-postgresql.airflow.svc.cluster.local
-      --set externalDatabase.port=5432
-      --set externalDatabase.database=airflow-db
-      --set externalDatabase.user=airflow-db-user
-      --set externalDatabase.passwordSecret=airflow-db-pass
-
+- name: Install Airflow
+  shell: |
+    helm install airflow-cluster airflow-stable/airflow \
+      --namespace airflow \
+      --version 8.1.3 \
+      --set web.service.nodePort.http=31000 \
+      --set web.service.type=NodePort \
+      --set postgresql.enabled=false \
+      --set externalDatabase.host=airflow-postgres-postgresql.airflow.svc.cluster.local \
+      --set externalDatabase.port=5432 \
+      --set externalDatabase.database=postgres \
+      --set externalDatabase.user=postgres \
+      --set externalDatabase.passwordSecret=airflow-postgres-postgresql \
+      --set externalDatabase.passwordSecretKey=postgresql-password \
+      --set logs.persistence.enabled=true \
+      --set logs.persistence.storageClass="" \
+      --set logs.persistence.accessMode=ReadWriteMany \
+      --set logs.persistence.size=1Gi \
+      --set redis.enabled=false \
+      --set externalRedis.host=airflow-redis-master.airflow.svc.cluster.local \
+      --set externalRedis.port=6380 \
+      --set externalRedis.databaseNumber=15 \
+      --set externalRedis.passwordSecret=airflow-redis \
+      --set externalRedis.passwordSecretKey=redis-password

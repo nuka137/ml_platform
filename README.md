@@ -17,3 +17,5 @@ ansible-playbook -i inventory.ini ansible/setup_kubernetes_cluster.yaml --privat
 ```
 ansible-playbook -i inventory.ini ansible/setup_kubeflow.yaml --private-key=~/.ssh/id_rsa
 ```
+
+* https://stackoverflow.com/questions/63917524/helm-postgres-password-authentication-failed

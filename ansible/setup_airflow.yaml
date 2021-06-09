@@ -1,0 +1,6 @@
+---
+- hosts: controlplane[0]
+  gather_facts: false
+  become: yes
+  roles:
+    - setup_airflow

@@ -2,6 +2,20 @@
 - name: Setup controlplane node
   shell: kubeadm init --apiserver-advertise-address={{hostvars[groups.controlplane[0]].ansible_host}} --pod-network-cidr=10.244.0.0/16
 
+# Change internal IP address
+- name: Change kubernetes internal IP address.
+  replace:
+    path: /var/lib/kubelet/kubeadm-flags.env
+    regexp: ^KUBELET_KUBEADM_ARGS=\"(.*)\"$
+    replace: 'KUBELET_KUBEADM_ARGS="\1 --node-ip={{ ansible_host }}"'
+- name: Reload daemons
+  ansible.builtin.systemd:
+    daemon_reload: yes
+- name: Restart kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    state: restarted
+
 - name: Create .kube directory for root
   file:
     path: "/root/.kube/"
