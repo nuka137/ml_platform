@@ -93,6 +93,6 @@
     dest="{{ ansible_ssh_user_home.stdout }}/.bashrc"
     line={{ item }}
   with_items:
-    - "echo 'source <(kubectl completion bash)'"
-    - "echo 'alias k=kubectl'"
-    - "echo 'complete -F __start_kubectl k'"
+    - "source <(kubectl completion bash)"
+    - "alias k=kubectl"
+    - "complete -F __start_kubectl k"

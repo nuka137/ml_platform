@@ -1,0 +1,35 @@
+---
+# Install Istio
+- name: Install istioctl
+  shell: chdir=/opt curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.10.1 TARGET_ARCH=x86_64 sh -
+- name: Set path to the istioctl
+  lineinfile:
+    dest="{{ ansible_ssh_user_home.stdout }}/.bashrc"
+    line={{ item }}
+  with_items:
+    - "export PATH=$PATH:/opt/istio-1.10.1/bin"
+- name: Install Istio
+  shell: istioctl install -y
+
+# Install Knative
+- name: Install Knative Serving
+  shell: |
+    kubectl apply -f https://github.com/knative/serving/releases/download/v0.23.0/serving-crds.yaml
+    kubectl apply -f https://github.com/knative/serving/releases/download/v0.23.0/serving-core.yaml
+    kubectl apply -f https://github.com/knative/net-istio/releases/download/v0.23.0/net-istio.yaml
+    kubectl apply -f https://github.com/knative/serving/releases/download/v0.23.0/serving-default-domain.yaml
+- name: Install Knative Eventing
+  shell: |
+    kubectl apply -f https://github.com/knative/eventing/releases/download/v0.23.0/eventing-crds.yaml
+    kubectl apply -f https://github.com/knative/eventing/releases/download/v0.23.0/eventing-core.yaml
+
+# Install Cert Manager
+- name: Install Cert Manager
+  shell: |
+    kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
+
+# Install KFServing
+- name: Install KFServing
+  shell: |
+    TAG=v0.5.1 kubectl apply -f https://github.com/kubeflow/kfserving/releases/download/$TAG/kfserving.yaml
+
