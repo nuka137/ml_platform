@@ -29,11 +29,11 @@ Vagrant.configure("2") do |config|
     k8s.vm.provision "ansible_local" do |ansible|
       ansible.playbook = "ansible/setup_kubernetes_node.yaml"
       ansible.inventory_path = "inventory.ini"
-      ansible.limit = "controlplane"
+      ansible.limit = "k8s-common"
     end
   end
 
-  (1..1).each do |i|
+  (1..2).each do |i|
     config.vm.define :"k8s-worker-#{i}" do |k8s|
       k8s.vm.hostname = "k8s-worker-#{i}"
 
@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
       k8s.vm.provision "ansible_local" do |ansible|
         ansible.playbook = "ansible/setup_kubernetes_node.yaml"
         ansible.inventory_path = "inventory.ini"
-        ansible.limit = "worker"
+        ansible.limit = "k8s-common"
       end
     end
   end

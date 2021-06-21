@@ -30,5 +30,11 @@ ansible-playbook -i inventory.ini ansible/setup_kubeflow.yaml --private-key=~/.s
 ansible-playbook -i inventory.ini ansible/setup_airflow.yaml --private-key=~/.ssh/id_rsa
 ```
 
+* Install KFServing
+
+```
+ansible-playbook -i inventory.ini ansible/setup_kfserving.yaml --private-key=~/.ssh/id_rsa
+```
+
 
 * https://stackoverflow.com/questions/63917524/helm-postgres-password-authentication-failed

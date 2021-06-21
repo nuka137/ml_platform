@@ -1,5 +1,5 @@
 - name: Setup kubernetes
-  hosts: controlplane, worker
+  hosts: controlplane, worker, k8s-common
   gather_facts: false
   become: yes
   roles:

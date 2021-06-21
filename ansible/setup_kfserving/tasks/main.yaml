@@ -1,5 +1,8 @@
 ---
 # Install Istio
+- name: Get home directory of ansible_ssh_user
+  shell: 'getent passwd "{{ ansible_ssh_user }}" | cut -d: -f6'
+  register: ansible_ssh_user_home
 - name: Install istioctl
   shell: chdir=/opt curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.10.1 TARGET_ARCH=x86_64 sh -
 - name: Set path to the istioctl
@@ -9,7 +12,7 @@
   with_items:
     - "export PATH=$PATH:/opt/istio-1.10.1/bin"
 - name: Install Istio
-  shell: istioctl install -y
+  shell: PATH=$PATH:/opt/istio-1.10.1/bin istioctl install -y
 
 # Install Knative
 - name: Install Knative Serving
@@ -29,7 +32,20 @@
     kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
 
 # Install KFServing
+- name: Get KFServing manifest file
+  get_url:
+    url: https://github.com/kubeflow/kfserving/releases/download/v0.5.1/kfserving.yaml
+    dest: /tmp/kfserving.yaml
+    force: yes
+- name: Fix KFServing manifest file to use knative gateway
+  replace:
+    path: /tmp/kfserving.yaml
+    regexp: '^(\s+"localGateway" : ).*,$'
+    replace: '\1 "knative-local-gateway.knative-serving",'
+- name: Fix KFServing manifest file to use knative gateway
+  replace:
+    path: /tmp/kfserving.yaml
+    regexp: '^(\s+"localGatewayService" : ).*,$'
+    replace: '\1 "knative-local-gateway.istio-system.svc.cluster.local",'
 - name: Install KFServing
-  shell: |
-    TAG=v0.5.1 kubectl apply -f https://github.com/kubeflow/kfserving/releases/download/$TAG/kfserving.yaml
-
+  shell: kubectl apply -f /tmp/kfserving.yaml

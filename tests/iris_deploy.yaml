@@ -1,0 +1,10 @@
+apiVersion: "serving.kubeflow.org/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "iris-deploy-test"
+  namespace: "jupyterhub"
+spec:
+  predictor:
+    sklearn:
+      protocolVersion: "v2"
+      storageUri: "pvc://claim-vagrant/"

@@ -1,0 +1,15 @@
+---
+- name: Create namespace 'jupyterhub'
+  shell: kubectl create ns jupyterhub
+
+- name: Add helm repository (Jupyter Hub)
+  shell: helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+- name: Update helm repository
+  shell: helm repo update
+- name: Install Jupyter Hub
+  shell: |
+    helm install jupyterhub jupyterhub/jupyterhub \
+      --namespace jupyterhub \
+      --version 1.0.0 \
+      --set proxy.service.nodePorts.http=32010 \
+      --set proxy.service.nodePorts.https=32011

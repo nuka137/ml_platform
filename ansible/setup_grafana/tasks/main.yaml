@@ -1,0 +1,32 @@
+---
+- name: Create namespace 'grafana'
+  shell: kubectl create ns grafana
+
+- name: Create secret for Grafana
+  shell: kubectl create secret generic grafana --from-literal=admin-user=admin --from-literal=admin-password=admin -n grafana
+
+- name: Add helm repository (Grafana)
+  shell: helm repo add grafana https://grafana.github.io/helm-charts
+- name: Update helm repository
+  shell: helm repo update
+- name: Install Grafana
+  shell: |
+    helm install grafana grafana/grafana \
+      --namespace grafana \
+      --set service.type=NodePort \
+      --set service.nodePort=32020 \
+      --set admin.existingSecret=grafana
+
+kubectl create secret generic grafana --from-literal=admin-user=admin --from-literal=admin-password=admin -n grafana
+
+- name: Add helm repository (Prometheus)
+  shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+- name: Update helm repository
+  shell: helm repo update
+- name: Install Prometheus
+  shell: |
+    helm install prometheus prometheus-community/prometheus \
+      --create-namespace \
+      --namespace prometheus
+
+# Add datasource http://prometheus-server.prometheus.svc.cluster.local in Grafana
