@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: k8s-dashboard-ingress-tls-secret
+  namespace: k8s-dashboard
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURHekNDQWdPZ0F3SUJBZ0lVSjZmZ3dudHlkWXVHUTc1VDdVbXVxN3dtYUxNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0hURWJNQmtHQTFVRUF3d1NjMlZqZFhKbExXbHVaM0psYzNNdVkyOXRNQjRYRFRJeE1EY3hOREl6TkRRMQpPVm9YRFRJeU1EY3hOREl6TkRRMU9Wb3dIVEViTUJrR0ExVUVBd3dTYzJWamRYSmxMV2x1WjNKbGMzTXVZMjl0Ck1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBdnhxVThCaVh1ZExhQmtEUC9kRkkKc0pmUHJZeWo5cmplZ2MydUJyOGpISTV5YXhqaHp6V2tmbHZ0OERJK2xyd1ZCanlyd01hbjRMZ1lmZFR5WHNQaQpYdGpmNWxKVW02WDkxYjJjcUZ2U3RUcjE4L1ZRNW1iSi9QR1BPVFhqejlpdHpyVmhBQlNiQmFVUUk2YXREeEppCkt4M0RkakRuYVRRTlhTOWYydDhGM3BqTFJyZWpIN3VXRUwrMVRjcmRNUUJ6cjBXMjZpY1FlOVh2UmJFWHoxTHkKSG0vWTVLUGxSTGFmcWNmUy9FejRIYTlUUWErcVhhb2QwZUpGZDJsVS9SR2FPK0sxRUxWbWoxUmswYlcxOW5wMwpYdzdKVDFRZUhGK2UzMW5ESzduazdFUUJGV1dmVW9tTTU1TlI3WktCUmhnRldpRkdsZ00weHVvaXQ2WHFNVTZjCjJ3SURBUUFCbzFNd1VUQWRCZ05WSFE0RUZnUVVYOFdBRFZlbzFyczdjVjRTMFJCeUVTcVhKbkl3SHdZRFZSMGoKQkJnd0ZvQVVYOFdBRFZlbzFyczdjVjRTMFJCeUVTcVhKbkl3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcQpoa2lHOXcwQkFRc0ZBQU9DQVFFQWRtVzdhUDVUWkZ1SkZVWWVOZWNHTmpGUlN4aVJwTHA4V3E2NzJTU2tPQi9HClBpTW5NN2NpR21jOWNlSDV6VDk2bjQrZGNtM2NzUDNyR1NUZjlJUk56UW1iTURIQzNnZ0xtNmhLLzVQNFpVN3EKZmdzNUpuTGExRk1TWko0dEIvYTMwdFRTQVp6UUJYVkM4a2RGU3QyVGFhQk5mNjR3ZkFya0h4ZWR6bGhZcTBtMwpHeGt4SURLL2ljcm5kWDF3YnV2d2dOSWtQajdiaDB2YUZVb0g4NFkyTkJuRlZXV0o2UVVkdkNGOEo3TUU3WWVLCkRQZWE5bkZMRDRYalY2QlRVem4rQTVya1lob3lMYngwMXFuTjRTZ2xRVzJlb1JSV0hjYUMrcnh6WUcxYUhpZWgKNGdROUlCckQ1dXl6MGhWcE9lM0pURXRvQ29qbVVndktZbzdjYkpRcVBRPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2QUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktZd2dnU2lBZ0VBQW9JQkFRQy9HcFR3R0plNTB0b0cKUU0vOTBVaXdsOCt0aktQMnVONkJ6YTRHdnlNY2puSnJHT0hQTmFSK1crM3dNajZXdkJVR1BLdkF4cWZndUJoOQoxUEpldytKZTJOL21VbFNicGYzVnZaeW9XOUsxT3ZYejlWRG1ac244OFk4NU5lUFAySzNPdFdFQUZKc0ZwUkFqCnBxMFBFbUlySGNOMk1PZHBOQTFkTDEvYTN3WGVtTXRHdDZNZnU1WVF2N1ZOeXQweEFIT3ZSYmJxSnhCNzFlOUYKc1JmUFV2SWViOWprbytWRXRwK3B4OUw4VFBnZHIxTkJyNnBkcWgzUjRrVjNhVlQ5RVpvNzRyVVF0V2FQVkdUUgp0YlgyZW5kZkRzbFBWQjRjWDU3ZldjTXJ1ZVRzUkFFVlpaOVNpWXpuazFIdGtvRkdHQVZhSVVhV0F6VEc2aUszCnBlb3hUcHpiQWdNQkFBRUNnZ0VBTkFTWlMrMTF4MWdVanFVdnVHZ3lRQmRpcVZ2aCtiT0NwWlNGN1VJejNYOE0KdUFneTF3TkQvajBwdkRzQS9HaS8xRTNKZHBUY2QzZkUrdU52QWNxU0lMMHAzUGpHSFFRRzN4cFl2UjhaY01sVwp6NHdUOUZOQVlnQ2l1ckRuak5qdkhwZ1Npa0lSbkd5OHd1ZUlyZFNVTWlaTTRTd1lvWE5RdSsrOFNNaHlRWStmCktqMzJhT2l0OEdRUEhYTkRGQXhPbmd3OHBzaGQ0MHZxeTU5MjJOcmNkRWk3bStVOVdiNEpobHVnMTBiZU5hNGsKdlhwRHJTVytTT1RwazJaTFhFVUszK2RIWVZKZmFRZERvbFpHM2pLODdZR1pKeGNibUJ5c3IvWEhtM005aHByLwpmd2RYb3p4Y3ZaWEtMMlhmbElxc1lvVFBjRms3ZzdON0RiaFdUKzZqUVFLQmdRRG1VL3U2M2dYQ3VlZ0VHNk4vCnA5WjNZbFZtQUtiUmVvM1VIQ1RuRlJ2dm5Fd0NBdVZWNFJYZFZiWDhYck1ZejZqTzYxU2x3UDJCeUlWRW83NDgKbXN2UytmRDlxa1Fza3pnYkN6dnR3Z3UzWGYzZFlKMmpUY3lVdTdPcGFYc0N2NmNvYnNKZjJqRFV2M052aEpyQwpQZHdmQ2VTZE5QN1BRWGw4TGxzL1Q5WVlPd0tCZ1FEVVoyY0RvN0hhUlFFNjF1RHdnbzZsTTZlMDJXbm9NRmNMCk1scnJCYVZOemNQT2pLbDJFek9sMWpvc3lzOC8zS3BIbkhHVzJsVXFUSkJ4ZlI4eDVDQU1jVWpaVy8rbFAraEYKclQrb3hTMmdFaFFPRUFmM2dxUS9zMnVyMkNsQjdHM3JIcWRtYU1hejJqRjdSUXdqZ2t2ZmR5Y21sZU94alRRcQpsbU5kU0lYajRRS0JnR2xtS1IyY0YvckI0K0J0WFdZL1FhOGorbnhROUFXTUZYYm80aUkwMExIWFRoamxobGpFClJhTWhZOFAyK2ZIeXBRYjdQYU1VSzIzR2V1V3NJSlBQS2xLRE9icDZ2Zk8vOHI2OVoxRW5xUURpTEJldjdMTWMKR1BBKzdMb3JvTFRqU3ZUL3FrYitxN1hQWGwyN3lxMzBiTlJ2VElSOENkYUIyYnZ2NHFXWVBScWRBb0dBR21ULwpHQ1N2WlVCTjl0SGRBZ1kzVTdBbmx3R3RkMzBLVkFuZDRuYkJJL245Nnh6dnNneVF6bnJnbjlCVUVNdUxIWHNECllvdWZLYko2QUtCYjBBZFpOREtmcXVNVDBhVXZaL2t2Zi9tQXdmTjlLb0l6ZXo1d3lybXhGNW0xQnN3cW5KMGkKa0VkVTZlU2pZWDRqRkFhTkJ5ZjNaWVFhMTJXRXBnWXFNdDFnUmdFQ2dZQVhVcWdOdVZNQ3VEUnVDK3czWlliTgpUN2phaG5ZclBOaStFZ0Y1L0l3K1puYlNZTDR1M2VPWSttNDFHU0x5OG00OGZaUG5YT1hMQ0d3dC9WVGFtdGx0CkZ2eDZYeVRPYVFKZGlsNERldGZreFBoZUY5MmtXV2Q4KzM3OHJRK3JJZmcxSHloWURLSS9rRHRleVkxUlQ0VTYKN3M5cllFSEdqbG9BMGdqdTdOYThkZz09Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+type: kubernetes.io/tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8s-dashboard-ingress
+  namespace: k8s-dashboard
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  tls:
+  - hosts:
+      - secure-ingress.com
+    secretName: k8s-dashboard-ingress-tls-secret
+  rules:
+  - host: secure-ingress.com
+    http:
+      paths:
+      - path: /dashboard(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: k8s-dashboard-kubernetes-dashboard
+            port:
+              number: 443
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k8s-dashboard-admin
+  namespace: k8s-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-dashboard-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: k8s-dashboard-admin
+  namespace: k8s-dashboard
+
+# helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+# kubectl create ns k8s-dashboard
+# helm install -n k8s-dashboard k8s-dashboard kubernetes-dashboard/kubernetes-dashboard
+
+# Access: https://192.168.56.201:32001/dashboard/   ★最後の/を忘れずに
+# Tokenの取得: kubectl -n k8s-dashboard get secret $(kubectl -n k8s-dashboard get sa/k8s-dashboard-admin -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+
+# SSL
+# openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=foo.bar.com"
+# cat tls.crt | base64 | tr -d "\n"
+# cat tls.key | base64 | tr -d "\n"
+# ★/etc/hostsに、`192.168.56.201 secure-ingress.com` を追加すること
+# curl -kv https://secure-ingress.com:32001/dashboard/ --resolve secure-ingress:32001:192.168.56.201
